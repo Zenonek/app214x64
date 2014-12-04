@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails',                '4.2.0.beta4'
+gem 'bcrypt', 				'~> 3.1.9'
 gem 'bootstrap-sass',       '3.2.0.0'
 gem 'sass-rails',           '5.0.0.beta1'
 gem 'uglifier',             '2.5.3'
@@ -33,3 +34,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'wdm', '>= 0.1.0'
+gem 'arel', '6.0.0.beta2'
