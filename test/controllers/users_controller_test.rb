@@ -3,7 +3,7 @@ require 'test_helper'
 class UsersControllerTest < ActionController::TestCase
 
   def setup
-    @user = users(:michael)
+    @user       = users(:michael)
     @other_user = users(:archer)
   end
 
@@ -38,6 +38,15 @@ class UsersControllerTest < ActionController::TestCase
     assert_redirected_to root_url
   end
 
+  test "should not allow the admin attribute to be edited via the web" do
+    log_in_as(@other_user)
+    assert_not @other_user.admin?
+    patch :update, id: @other_user, user: { password:              "",
+                                            password_confirmation: "",
+                                            admin: true }
+    assert_not @other_user.reload.admin?
+  end
+
   test "should redirect index when not logged in" do
     get :index
     assert_redirected_to login_url
@@ -45,7 +54,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test "should redirect destroy when not logged in" do
     assert_no_difference 'User.count' do
-      delete :destroy, id: @other_user
+      delete :destroy, id: @user
     end
     assert_redirected_to login_url
   end
@@ -56,24 +65,5 @@ class UsersControllerTest < ActionController::TestCase
       delete :destroy, id: @user
     end
     assert_redirected_to root_url
-  end
-
-  test "should not allow the admin attribute to be edited via the web" do
-    log_in_as(@other_user)
-    assert_not @other_user.admin?
-    patch :update, id: @other_user, user: { password:              "",
-                                            password_confirmation: "",
-                                            admin: true }
-    assert_not @other_user.admin?
-  end
-
-  test "should not allow the admin attribute to be edited via the web2" do
-    log_in_as(@user)
-    assert @user.admin?
-    patch :update, id: @other_user, user: { password: "",
-                                      password_confirm: "",
-                                      admin: true }
-    @other_user.reload
-    assert_not @other_user.admin?
   end
 end

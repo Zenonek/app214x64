@@ -32,11 +32,16 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-    if @user.update_attributes(user_params)
-      flash[:success] = "Profil użytkownika został zapisany."
+    if request.patch? && !params[:user][:admin].nil?
+      flash[:danger] = "Nie można nadać lub zmienić uprawnień administratora"
       redirect_to @user
     else
-      render 'edit'
+      if @user.update_attributes(user_params)
+        flash[:success] = "Profil użytkownika został zapisany."
+        redirect_to @user
+      else
+        render 'edit'
+      end
     end
   end
 
@@ -51,7 +56,8 @@ class UsersController < ApplicationController
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :password,
+                                    :password_confirmation, :admin)
     end
 
     # Before filters
