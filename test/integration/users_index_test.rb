@@ -32,4 +32,14 @@ class UsersIndexTest < ActionDispatch::IntegrationTest
     get users_path
     assert_select 'a', text: 'delete', count: 0
   end
+
+  test "checking presence non-activated users" do
+    log_in_as(@admin)
+    @non_admin.toggle!(:activated)
+    get users_path
+    users = assigns(:users)
+    users.paginate(page: 1).each do |user|
+      assert user.activated?
+    end
+  end
 end
